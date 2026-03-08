@@ -83,7 +83,17 @@ class AdminSidebar extends StatelessWidget {
               ),
             ],
           ),
-
+          _SidebarSection(
+            label: 'Catalogo de Actividades de Mano de Obra',
+            items: [
+              NavItem(
+                icon: Icons.build_rounded,
+                label: 'Acts de Mano de Obra',
+                route: RouteNames.laborCatalog,
+                currentRoute: currentRoute,
+              ),
+            ],
+          ),
           const Spacer(),
 
           // User info at bottom
