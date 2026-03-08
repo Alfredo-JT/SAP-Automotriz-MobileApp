@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'config/router/app_router.dart';
+import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      title: 'SAP Automotriz App',
+      debugShowCheckedModeBanner: false,
+      onGenerateRoute: AppRouter.onGenerateRoute,
+      initialRoute: RouteNames.login,
+      theme: AppTheme().getTheme(),
     );
   }
 }

@@ -210,18 +210,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (!isDesktop) ...[
                             Row(
                               children: [
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.crimsonRed,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Icon(
-                                    Icons.directions_car_rounded,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
+                                StyledIconBox(
+                                  backgroundColor: AppColors.crimsonRed,
+                                  icon: Icons.directions_car_rounded,
                                 ),
                                 const SizedBox(width: 10),
                                 const Text(
@@ -258,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           // CustomTextFormField Email
                           CustomTextFormField(
-                            textEditingController: _emailController,
+                            controller: _emailController,
                             text: 'Correo electrónico',
                             prefixIcon: const Icon(Icons.email_outlined),
                             validatorFunction: (v) {
@@ -274,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           // CustomTextFormField Password
                           CustomTextFormField(
                             obscureText: true,
-                            textEditingController: _passwordController,
+                            controller: _passwordController,
                             text: 'Contraseña',
                             prefixIcon: const Icon(Icons.lock_outline_rounded),
                             suffixIcon: IconButton(

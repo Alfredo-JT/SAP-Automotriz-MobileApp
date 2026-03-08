@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/styled_icon_box.dart';
 
 class QuickAccessCard extends StatelessWidget {
   final IconData icon;
@@ -33,18 +34,10 @@ class QuickAccessCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.crimsonRed.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.people_alt_rounded,
-                  color: AppColors.crimsonRed,
-                  size: 20,
-                ),
+              StyledIconBox(
+                backgroundColor: AppColors.crimsonRed.withOpacity(0.1),
+                icon: icon,
+                iconColor: AppColors.crimsonRed,
               ),
               const SizedBox(height: 12),
               Text(

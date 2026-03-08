@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
-import 'package:sap_automotriz_app/features/shared/widgets/custom_elevated_button.dart';
-import 'package:sap_automotriz_app/features/shared/widgets/custom_text_form_field.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -67,18 +66,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   Row(
                     children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.crimsonRed,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.directions_car_rounded,
-                          color: Colors.white,
-                          size: 22,
-                        ),
+                      StyledIconBox(
+                        backgroundColor: AppColors.crimsonRed,
+                        icon: Icons.directions_car_rounded,
                       ),
                       const SizedBox(width: 12),
                       const Text(
@@ -111,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 32),
 
                   CustomTextFormField(
-                    textEditingController: _nameController,
+                    controller: _nameController,
                     text: 'Nombre completo',
                     prefixIcon: Icon(Icons.badge_outlined),
                     validatorFunction: (value) {
@@ -125,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 14),
 
                   CustomTextFormField(
-                    textEditingController: _emailController,
+                    controller: _emailController,
                     text: 'Correo electrónico',
                     prefixIcon: Icon(Icons.email_outlined),
                     validatorFunction: (value) {
@@ -139,7 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 14),
 
                   CustomTextFormField(
-                    textEditingController: _phoneController,
+                    controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     text: 'Teléfono',
                     prefixIcon: Icon(Icons.phone_outlined),
@@ -150,7 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 14),
 
                   CustomTextFormField(
-                    textEditingController: _passwordController,
+                    controller: _passwordController,
                     text: 'Contraseña',
                     obscureText: _obscurePassword,
                     validatorFunction: (v) {
@@ -177,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 14),
 
                   CustomTextFormField(
-                    textEditingController: _confirmController,
+                    controller: _confirmController,
                     text: 'Confirmar contraseña',
                     obscureText: _obscurePassword,
                     prefixIcon: const Icon(Icons.lock_outline_rounded),

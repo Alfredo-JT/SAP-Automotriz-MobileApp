@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
-  final TextEditingController textEditingController;
+  final TextEditingController controller;
   final String text;
   final bool? obscureText;
   final TextInputType? keyboardType;
@@ -10,7 +10,7 @@ class CustomTextFormField extends StatelessWidget {
 
   const CustomTextFormField({
     super.key,
-    required this.textEditingController,
+    required this.controller,
     required this.text,
     this.obscureText,
     this.keyboardType,
@@ -22,7 +22,7 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: textEditingController,
+      controller: controller,
       obscureText: obscureText ?? false,
       keyboardType: keyboardType ?? TextInputType.text,
       decoration: InputDecoration(

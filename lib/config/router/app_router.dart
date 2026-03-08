@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sap_automotriz_app/features/auth/screens/screens.dart';
+import 'package:sap_automotriz_app/features/auth/presentation/screens/screens.dart';
+import 'package:sap_automotriz_app/features/customers/presentation/screens/customers_screen.dart';
+import 'package:sap_automotriz_app/features/dashboard/presentation/screens/dashboard_admin_screen.dart';
 
-/// Central place to define route names.
 class RouteNames {
   static const String login = '/';
   static const String register = '/register';
   static const String dashboardAdmin = '/dashboard_admin';
+  static const String customers = '/customers';
 }
 
-/// Simple router you can later extend with route protection.
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -26,12 +27,17 @@ class AppRouter {
 
       case RouteNames.dashboardAdmin:
         return MaterialPageRoute(
-          builder: (_) => const RegisterScreen(),
+          builder: (_) => const DashboardAdminScreen(),
+          settings: settings,
+        );
+
+      case RouteNames.customers:
+        return MaterialPageRoute(
+          builder: (_) => const CustomersScreen(),
           settings: settings,
         );
 
       default:
-        // Fallback route
         return MaterialPageRoute(
           builder: (_) =>
               const Scaffold(body: Center(child: Text('Route not found'))),

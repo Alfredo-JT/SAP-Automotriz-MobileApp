@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/features/dashboard/presentation/widgets/widgets.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
 
 class AdminSidebar extends StatelessWidget {
   final String currentRoute;
@@ -25,18 +26,9 @@ class AdminSidebar extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: AppColors.crimsonRed,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.directions_car_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                StyledIconBox(
+                  backgroundColor: AppColors.crimsonRed,
+                  icon: Icons.directions_car_rounded,
                 ),
                 const SizedBox(width: 12),
                 const Column(
