@@ -3,6 +3,7 @@ import 'package:sap_automotriz_app/features/auth/presentation/screens/screens.da
 import 'package:sap_automotriz_app/features/customers/presentation/screens/customers_screen.dart';
 import 'package:sap_automotriz_app/features/dashboard/presentation/screens/dashboard_admin_screen.dart';
 import 'package:sap_automotriz_app/features/service_labor/presentation/screens/labor_catalog_screen.dart';
+import 'package:sap_automotriz_app/features/users/presentation/screens/user_account_screen.dart';
 
 class RouteNames {
   static const String login = '/';
@@ -10,6 +11,7 @@ class RouteNames {
   static const String dashboardAdmin = '/dashboard_admin';
   static const String customers = '/customers';
   static const String laborCatalog = '/labor_catalog';
+  static const String userAccounts = '/user_accounts';
 }
 
 class AppRouter {
@@ -43,7 +45,11 @@ class AppRouter {
           builder: (_) => const LaborCatalogScreen(),
           settings: settings,
         );
-
+      case RouteNames.userAccounts:
+        return MaterialPageRoute(
+          builder: (_) => const UserAccountScreen(),
+          settings: settings,
+        );
       default:
         return MaterialPageRoute(
           builder: (_) =>

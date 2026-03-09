@@ -71,10 +71,15 @@ class AdminSidebar extends StatelessWidget {
               ),
             ],
           ),
-
           _SidebarSection(
-            label: 'CLIENTES',
+            label: 'USUARIOS',
             items: [
+              NavItem(
+                icon: Icons.engineering,
+                label: 'Trabajadores',
+                route: RouteNames.userAccounts,
+                currentRoute: currentRoute,
+              ),
               NavItem(
                 icon: Icons.people_alt_rounded,
                 label: 'Clientes',
