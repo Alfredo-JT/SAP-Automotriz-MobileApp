@@ -99,6 +99,17 @@ class AdminSidebar extends StatelessWidget {
               ),
             ],
           ),
+          _SidebarSection(
+            label: 'SERVICIOS',
+            items: [
+              NavItem(
+                icon: Icons.miscellaneous_services,
+                label: 'Servicios',
+                route: RouteNames.services,
+                currentRoute: currentRoute,
+              ),
+            ],
+          ),
           const Spacer(),
 
           // User info at bottom
