@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/core/utils/folio_generator.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/car.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/customer.dart';
-import 'package:sap_automotriz_app/features/dashboard/presentation/widgets/admin_layout.dart';
 import 'package:sap_automotriz_app/features/services/domain/entities/entities.dart';
+import 'package:sap_automotriz_app/features/services/presentation/widgets/widgets.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/custom_dropdown_form.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
+
+String _formatDate(DateTime dt) =>
+    '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
 
 class NewServiceScreen extends StatefulWidget {
   final bool standalone;
@@ -147,7 +151,7 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _SectionCard(
+                SectionCard(
                   title: 'Información del servicio',
                   icon: Icons.build_circle_outlined,
                   children: [
@@ -155,39 +159,23 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: DropdownButtonFormField<ServiceChannel>(
+                          child: CustomDropdownForm<ServiceChannel>(
                             value: _channel,
-                            decoration: const InputDecoration(
-                              labelText: 'Canal de entrada *',
-                              prefixIcon: Icon(Icons.input_rounded),
-                            ),
-                            items: ServiceChannel.values
-                                .map(
-                                  (c) => DropdownMenuItem(
-                                    value: c,
-                                    child: Text(c.label),
-                                  ),
-                                )
-                                .toList(),
+                            items: ServiceChannel.values,
+                            labelBuilder: (c) => c.label,
+                            labelText: 'Canal de entrada *',
+                            prefixIcon: Icons.input_rounded,
                             onChanged: (v) => setState(() => _channel = v!),
                           ),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
-                          child: DropdownButtonFormField<ServiceType>(
+                          child: CustomDropdownForm<ServiceType>(
                             value: _serviceType,
-                            decoration: const InputDecoration(
-                              labelText: 'Tipo de servicio *',
-                              prefixIcon: Icon(Icons.category_outlined),
-                            ),
-                            items: ServiceType.values
-                                .map(
-                                  (t) => DropdownMenuItem(
-                                    value: t,
-                                    child: Text(t.label),
-                                  ),
-                                )
-                                .toList(),
+                            labelBuilder: (c) => c.label,
+                            labelText: 'Tipo de servicio *',
+                            prefixIcon: Icons.category_outlined,
+                            items: ServiceType.values,
                             onChanged: (v) => setState(() => _serviceType = v!),
                           ),
                         ),
@@ -219,33 +207,28 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
                     const SizedBox(height: 14),
 
                     // Descripción breve
-                    TextFormField(
+                    CustomTextFormField(
+                      prefixIcon: Icon(Icons.short_text_rounded),
                       controller: _shortDescController,
-                      decoration: const InputDecoration(
-                        labelText: 'Descripción breve *',
-                        prefixIcon: Icon(Icons.short_text_rounded),
-                      ),
-                      validator: (v) =>
+                      text: 'Descripción breve *',
+                      validatorFunction: (v) =>
                           v == null || v.isEmpty ? 'Campo requerido' : null,
                     ),
                     const SizedBox(height: 14),
 
                     // Descripción detallada
-                    TextFormField(
+                    CustomTextFormField(
+                      prefixIcon: Icon(Icons.notes_rounded),
                       controller: _detailedDescController,
                       maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: 'Descripción detallada',
-                        prefixIcon: Icon(Icons.notes_rounded),
-                        alignLabelWithHint: true,
-                      ),
+                      text: 'Descripción detallada *',
                     ),
                   ],
                 ),
 
                 const SizedBox(height: 16),
 
-                _SectionCard(
+                SectionCard(
                   title: 'Cliente y vehículo',
                   icon: Icons.person_search_outlined,
                   children: [
@@ -317,14 +300,10 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
 
                 const SizedBox(height: 24),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: _submit,
-                    icon: const Icon(Icons.check_circle_outline_rounded),
-                    label: const Text('Crear servicio'),
-                  ),
+                CustomElevatedButton(
+                  text: 'Crear servicio',
+                  onPressed: _submit,
+                  isLoading: false,
                 ),
               ],
             ),
@@ -338,48 +317,6 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
           width: 280,
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.charcoal,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'FOLIO GENERADO',
-                      style: TextStyle(
-                        color: AppColors.warmGray,
-                        fontSize: 10,
-                        letterSpacing: 1.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _previewFolio,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 2,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _formatDate(_intakeDate),
-                      style: const TextStyle(
-                        color: AppColors.warmGray,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 14),
-
               // Status inicial
               Container(
                 padding: const EdgeInsets.all(16),
@@ -427,125 +364,46 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
 
               const SizedBox(height: 14),
 
-              // Resumen selección
-              if (_selectedCustomer != null)
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFEDE5DC)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Resumen',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.warmGray,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _PreviewRow(
-                        icon: Icons.person_rounded,
-                        label: _selectedCustomer!.fullName,
-                      ),
-                      if (_selectedCar != null) ...[
-                        const SizedBox(height: 6),
-                        _PreviewRow(
-                          icon: Icons.directions_car_rounded,
-                          label:
-                              '${_selectedCar!.year} ${_selectedCar!.make} ${_selectedCar!.model}',
-                        ),
-                        const SizedBox(height: 6),
-                        _PreviewRow(
-                          icon: Icons.pin_outlined,
-                          label: _selectedCar!.licensePlate,
-                        ),
-                      ],
-                      const SizedBox(height: 6),
-                      _PreviewRow(
-                        icon: Icons.category_outlined,
-                        label: _serviceType.label,
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-String _formatDate(DateTime dt) =>
-    '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
-
-class _SectionCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final List<Widget> children;
-  const _SectionCard({
-    required this.title,
-    required this.icon,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEDE5DC)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 16, color: AppColors.crimsonRed),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
                   color: AppColors.charcoal,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'FOLIO GENERADO',
+                      style: TextStyle(
+                        color: AppColors.warmGray,
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _previewFolio,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _formatDate(_intakeDate),
+                      style: const TextStyle(
+                        color: AppColors.warmGray,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFEDE5DC)),
-          const SizedBox(height: 16),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _PreviewRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  const _PreviewRow({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 13, color: AppColors.warmGray),
-        const SizedBox(width: 7),
-        Flexible(
-          child: Text(
-            label,
-            style: const TextStyle(fontSize: 13, color: AppColors.charcoal),
-            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

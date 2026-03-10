@@ -164,7 +164,7 @@ class _QuoteLineItemFormDialogState extends State<QuoteLineItemFormDialog> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        isEditing ? 'Editar partida' : 'Agregar partida',
+                        isEditing ? 'Editar concepto' : 'Agregar concepto',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -186,9 +186,9 @@ class _QuoteLineItemFormDialogState extends State<QuoteLineItemFormDialog> {
 
                   const SizedBox(height: 20),
 
-                  // Tipo de partida
+                  // Tipo de concepto
                   const Text(
-                    'Tipo de partida',
+                    'Tipo de concepto',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -379,7 +379,7 @@ class _QuoteLineItemFormDialogState extends State<QuoteLineItemFormDialog> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Total partida',
+                          'Total concepto',
                           style: TextStyle(
                             fontSize: 13,
                             color: AppColors.warmGray,

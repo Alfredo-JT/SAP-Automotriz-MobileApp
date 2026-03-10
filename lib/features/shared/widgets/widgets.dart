@@ -1,3 +1,4 @@
+export 'package:sap_automotriz_app/features/shared/widgets/custom_tab_bar.dart';
 export 'package:sap_automotriz_app/features/shared/widgets/table_header_cell.dart';
 export 'package:sap_automotriz_app/features/shared/widgets/styled_icon_box.dart';
 export 'package:sap_automotriz_app/features/shared/widgets/summary_card.dart';

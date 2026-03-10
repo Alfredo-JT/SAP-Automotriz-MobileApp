@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/router/app_router.dart';
-import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/features/dashboard/presentation/widgets/admin_layout.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
 import 'new_service_screen.dart';
 import 'quote_completion_screen.dart';
 import 'service_operations_screen.dart';
@@ -37,81 +37,28 @@ class _ServicesHubScreenState extends State<ServicesHubScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Custom tab bar
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFEDE5DC)),
-            ),
-            padding: const EdgeInsets.all(4),
-            child: TabBar(
-              controller: _tabController,
-              indicator: BoxDecoration(
-                color: AppColors.charcoal,
-                borderRadius: BorderRadius.circular(8),
+          CustomTabBar(
+            tabController: _tabController,
+            tabs: [
+              _TabItem(
+                label: 'Nuevo Servicio',
+                icon: Icons.add_circle_outline_rounded,
               ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerColor: Colors.transparent,
-              labelColor: Colors.white,
-              unselectedLabelColor: AppColors.warmGray,
-              labelStyle: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+              _TabItem(
+                label: 'Servicios Cotizados (Completar y revisar cotizaciones)',
+                icon: Icons.request_quote_outlined,
               ),
-              unselectedLabelStyle: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-              ),
-              tabs: const [
-                Tab(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.add_circle_outline_rounded, size: 16),
-                      SizedBox(width: 8),
-                      Text('Nuevo servicio'),
-                    ],
-                  ),
-                ),
-                Tab(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.request_quote_outlined, size: 16),
-                      SizedBox(width: 8),
-                      Text('Completar cotización'),
-                    ],
-                  ),
-                ),
-                Tab(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.tune_rounded, size: 16),
-                      SizedBox(width: 8),
-                      Text('Operaciones'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              _TabItem(label: 'Operaciones', icon: Icons.tune_rounded),
+            ],
           ),
-
           const SizedBox(height: 20),
 
-          // Tab content — each tab manages its own scroll
           SizedBox(
             height: MediaQuery.of(context).size.height - 180,
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: const [
-                // _TabContent(child: NewServiceScreen()),
-                // _TabContent(child: QuoteCompletionScreen()),
-                // _TabContent(child: ServiceOperationsScreen()),
-
-                // Text('Nuevo servicio - En construcción'),
                 _TabContent(child: NewServiceScreen()),
                 _TabContent(child: QuoteCompletionScreen()),
                 _TabContent(child: ServiceOperationsScreen()),
@@ -124,13 +71,24 @@ class _ServicesHubScreenState extends State<ServicesHubScreen>
   }
 }
 
+class _TabItem extends StatelessWidget {
+  final String label;
+  final IconData icon;
+
+  const _TabItem({super.key, required this.label, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [Icon(icon, size: 16), SizedBox(width: 8), Text(label)],
+      ),
+    );
+  }
+}
+
 /// Wraps tab content in a scrollable container.
-/// Note: NewServiceScreen, QuoteCompletionScreen and ServiceOperationsScreen
-/// each contain AdminLayout when used as standalone routes.
-/// When embedded here, they reuse the hub's AdminLayout naturally because
-/// ServicesHubScreen itself is wrapped in AdminLayout — the inner screens
-/// should be refactored to accept a [standalone] flag and skip their own
-/// AdminLayout when false. This is left as a TODO for when BLoC is wired.
 class _TabContent extends StatelessWidget {
   final Widget child;
   const _TabContent({required this.child});

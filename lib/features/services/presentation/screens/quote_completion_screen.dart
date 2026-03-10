@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/car.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/customer.dart';
-import 'package:sap_automotriz_app/features/dashboard/presentation/widgets/widgets.dart';
 import 'package:sap_automotriz_app/features/services/domain/entities/entities.dart';
+import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
 import 'package:sap_automotriz_app/features/services/presentation/widgets/widgets.dart';
 
 class QuoteCompletionScreen extends StatefulWidget {
@@ -238,76 +237,10 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
               const SizedBox(height: 10),
               ..._quotedServices.map((s) {
                 final selected = _selectedService?.id == s.id;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: GestureDetector(
-                    onTap: () => setState(() {
-                      _selectedService = s;
-                      _estimatedDelivery = s.estimatedDeliveryDate;
-                    }),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: selected
-                            ? AppColors.crimsonRed.withOpacity(0.06)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: selected
-                              ? AppColors.crimsonRed
-                              : const Color(0xFFEDE5DC),
-                          width: selected ? 1.5 : 1,
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                s.folio,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: selected
-                                      ? AppColors.crimsonRed
-                                      : AppColors.charcoal,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                              const Spacer(),
-                              Icon(
-                                channelIcon(s.channel),
-                                size: 13,
-                                color: AppColors.warmGray,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            s.customer?.fullName ?? '—',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.charcoal,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            s.car != null
-                                ? '${s.car!.year} ${s.car!.make} ${s.car!.model}'
-                                : '—',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: AppColors.warmGray,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                return ServiceQuotedCard(
+                  service: s,
+                  selected: selected,
+                  onTap: () => setState(() => _selectedService = s),
                 );
               }),
             ],
@@ -343,85 +276,11 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Service header
-                    Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFEDE5DC)),
-                      ),
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _selectedService!.folio,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.charcoal,
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                _selectedService!.shortDescription,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.warmGray,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          // Estimated delivery picker
-                          GestureDetector(
-                            onTap: _pickDeliveryDate,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: _estimatedDelivery != null
-                                      ? AppColors.crimsonRed
-                                      : AppColors.warmGray,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.event_outlined,
-                                    size: 15,
-                                    color: _estimatedDelivery != null
-                                        ? AppColors.crimsonRed
-                                        : AppColors.warmGray,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    _estimatedDelivery != null
-                                        ? 'Entrega: ${formatDate(_estimatedDelivery)}'
-                                        : 'Fecha entrega estimada',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: _estimatedDelivery != null
-                                          ? AppColors.crimsonRed
-                                          : AppColors.warmGray,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          ServiceStatusBadge(status: _selectedService!.status),
-                        ],
-                      ),
+                    ServiceQuotedHeader(
+                      service: _selectedService!,
+                      estimatedDelivery: _estimatedDelivery,
+                      onPickDeliveryDate: _pickDeliveryDate,
                     ),
-
                     const SizedBox(height: 16),
 
                     // Line items table
@@ -449,13 +308,18 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                               children: [
                                 const Expanded(
                                   flex: 4,
-                                  child: _TH('Descripción'),
+                                  child: TableHeaderCell('Descripción'),
                                 ),
-                                const Expanded(flex: 2, child: _TH('Tipo')),
-                                const _TH('Cant.'),
+                                const Expanded(
+                                  flex: 2,
+                                  child: TableHeaderCell('Tipo'),
+                                ),
+                                const TableHeaderCell('Cant.'),
                                 const SizedBox(width: 16),
-                                const Expanded(child: _TH('P. Unit.')),
-                                const Expanded(child: _TH('Total')),
+                                const Expanded(
+                                  child: TableHeaderCell('P. Unit.'),
+                                ),
+                                const Expanded(child: TableHeaderCell('Total')),
                                 const SizedBox(width: 72),
                               ],
                             ),
@@ -466,7 +330,7 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                               padding: EdgeInsets.all(32),
                               child: Center(
                                 child: Text(
-                                  'Sin partidas aún',
+                                  'Sin conceptos aún',
                                   style: TextStyle(
                                     color: AppColors.warmGray,
                                     fontSize: 13,
@@ -618,7 +482,7 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                             child: TextButton.icon(
                               onPressed: _addLineItem,
                               icon: const Icon(Icons.add_rounded, size: 16),
-                              label: const Text('Agregar partida'),
+                              label: const Text('Agregar concepto'),
                             ),
                           ),
                         ],
@@ -682,24 +546,6 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                 ),
         ),
       ],
-    );
-  }
-}
-
-class _TH extends StatelessWidget {
-  final String text;
-  const _TH(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.5,
-      ),
     );
   }
 }
