@@ -5,6 +5,7 @@ class Customer {
   final String? email;
   final String? rfc;
   final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const Customer({
     this.id,
@@ -13,6 +14,7 @@ class Customer {
     this.email,
     this.rfc,
     this.createdAt,
+    this.updatedAt,
   });
 
   Customer copyWith({
