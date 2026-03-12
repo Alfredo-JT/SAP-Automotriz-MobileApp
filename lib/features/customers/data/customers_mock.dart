@@ -19,7 +19,7 @@ final List<Map<String, dynamic>> customersApiMock = [
   },
   {
     'id': 3,
-    'full_name': 'Roberto Hernández',
+    'full_name': 'Antonio Hernández',
     'phone': '461-555-7890',
     'email': null,
     'rfc': 'HERO790312XYZ',

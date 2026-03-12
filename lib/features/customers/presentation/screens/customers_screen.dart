@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/customer.dart';
+import 'package:sap_automotriz_app/features/customers/infrastructure/datasources/customers_datasource.dart';
+import 'package:sap_automotriz_app/features/customers/infrastructure/repositories/customers_repository_impl.dart';
+import 'package:sap_automotriz_app/features/customers/presentation/bloc/customers_bloc.dart';
+import 'package:sap_automotriz_app/features/customers/presentation/bloc/customers_event.dart';
+import 'package:sap_automotriz_app/features/customers/presentation/bloc/customers_state.dart';
 import 'package:sap_automotriz_app/features/customers/presentation/widgets/table_customer_row.dart';
 import 'package:sap_automotriz_app/features/dashboard/presentation/widgets/admin_layout.dart';
 import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
 import 'customer_detail_screen.dart';
 import '../widgets/customer_form_dialog.dart';
+
+class CustomersPage extends StatelessWidget {
+  const CustomersPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) =>
+          CustomersBloc(CustomersRepositoryImpl(CustomersDatasource()))
+            ..add(CustomersLoadRequested()),
+      child: const CustomersScreen(),
+    );
+  }
+}
 
 class CustomersScreen extends StatefulWidget {
   const CustomersScreen({super.key});
@@ -19,65 +39,39 @@ class _CustomersScreenState extends State<CustomersScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // Mock data — replace with BLoC state
-  final List<Customer> _customers = [
-    Customer(
-      id: 1,
-      fullName: 'Carlos Ramírez',
-      phone: '461-123-4567',
-      email: 'carlos@example.com',
-      rfc: 'RAMC850101',
-      createdAt: DateTime(2024, 3, 10),
-    ),
-    Customer(
-      id: 2,
-      fullName: 'Laura González',
-      phone: '461-987-6543',
-      email: 'laura@example.com',
-      createdAt: DateTime(2024, 5, 22),
-    ),
-    Customer(
-      id: 3,
-      fullName: 'Roberto Hernández',
-      phone: '461-555-7890',
-      email: 'roberto@example.com',
-      rfc: 'HERO790312',
-      createdAt: DateTime(2025, 1, 5),
-    ),
-  ];
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
-  List<Customer> get _filtered => _customers
-      .where(
-        (c) =>
-            c.fullName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            (c.email?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
-                false) ||
-            c.phone.contains(_searchQuery),
-      )
-      .toList();
+  List<Customer> _applySearch(List<Customer> customers) {
+    if (_searchQuery.isEmpty) return customers;
+    return customers.where((c) {
+      return c.fullName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          (c.email?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false) ||
+          c.phone.contains(_searchQuery);
+    }).toList();
+  }
 
-  void _openCreateDialog() async {
+  void _openCreate() async {
     final result = await showDialog<Customer>(
       context: context,
       builder: (_) => const CustomerFormDialog(),
     );
-    if (result != null) {
-      setState(() {
-        _customers.add(result.copyWith(id: _customers.length + 1));
-      });
+    if (result != null && mounted) {
+      context.read<CustomersBloc>().add(CustomerCreateRequested(result));
     }
   }
 
-  void _openEditDialog(Customer customer) async {
+  void _openEdit(Customer customer) async {
     final result = await showDialog<Customer>(
       context: context,
       builder: (_) => CustomerFormDialog(customer: customer),
     );
-    if (result != null) {
-      setState(() {
-        final idx = _customers.indexWhere((c) => c.id == customer.id);
-        if (idx != -1) _customers[idx] = result;
-      });
+    if (result != null && mounted) {
+      context.read<CustomersBloc>().add(CustomerUpdateRequested(result));
     }
   }
 
@@ -96,10 +90,10 @@ class _CustomersScreenState extends State<CustomersScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(
-                () => _customers.removeWhere((c) => c.id == customer.id),
-              );
               Navigator.pop(context);
+              context.read<CustomersBloc>().add(
+                CustomerDeleteRequested(customer.id!),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.crimsonRed,
@@ -112,121 +106,160 @@ class _CustomersScreenState extends State<CustomersScreen> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final filtered = _filtered;
+    return BlocConsumer<CustomersBloc, CustomersState>(
+      listener: (context, state) {
+        if (state is CustomersOperationSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: const Color(0xFF16A34A),
+            ),
+          );
+        }
+        if (state is CustomersError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.crimsonRed,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        // Extraemos la lista de customers de cualquier estado que la tenga
+        final customers = switch (state) {
+          CustomersLoaded s => s.customers,
+          CustomersOperationSuccess s => s.customers,
+          _ => <Customer>[],
+        };
 
-    return AdminLayout(
-      currentRoute: RouteNames.customers,
-      pageTitle: 'Clientes',
-      actions: [
-        ElevatedButton.icon(
-          onPressed: _openCreateDialog,
-          icon: const Icon(Icons.add_rounded, size: 18),
-          label: const Text('Nuevo cliente'),
-        ),
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Search bar
-          SizedBox(
-            width: 320,
-            child: TextField(
-              controller: _searchController,
-              onChanged: (v) => setState(() => _searchQuery = v),
-              decoration: const InputDecoration(
-                hintText: 'Buscar por nombre, email o teléfono...',
-                prefixIcon: Icon(Icons.search_rounded),
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 14,
+        final filtered = _applySearch(customers);
+
+        return AdminLayout(
+          currentRoute: RouteNames.customers,
+          pageTitle: 'Clientes',
+          actions: [
+            ElevatedButton.icon(
+              onPressed: _openCreate,
+              icon: const Icon(Icons.add_rounded, size: 18),
+              label: const Text('Nuevo cliente'),
+            ),
+          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 320,
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (v) => setState(() => _searchQuery = v),
+                  decoration: const InputDecoration(
+                    hintText: 'Buscar por nombre, email o teléfono...',
+                    prefixIcon: Icon(Icons.search_rounded),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 14,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
 
-          const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-          // Table header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.charcoal,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-            ),
-            child: const Row(
-              children: [
-                Expanded(flex: 3, child: TableHeaderCell('Nombre')),
-                Expanded(flex: 3, child: TableHeaderCell('Correo')),
-                Expanded(flex: 2, child: TableHeaderCell('Teléfono')),
-                Expanded(flex: 2, child: TableHeaderCell('RFC')),
-                Expanded(flex: 2, child: TableHeaderCell('Registro')),
-                SizedBox(width: 100, child: TableHeaderCell('Acciones')),
-              ],
-            ),
-          ),
+              // Loading indicator
+              if (state is CustomersLoading)
+                const LinearProgressIndicator(
+                  backgroundColor: Color(0xFFEDE5DC),
+                  color: AppColors.crimsonRed,
+                ),
 
-          // Table rows
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(12),
-              ),
-              border: Border.all(color: const Color(0xFFEDE5DC)),
-            ),
-            child: filtered.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(40),
-                    child: Center(
-                      child: Text(
-                        'No se encontraron clientes',
-                        style: TextStyle(
-                          color: AppColors.warmGray,
-                          fontSize: 14,
-                        ),
-                      ),
+              const SizedBox(height: 4),
+
+              // Table header
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.charcoal,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                ),
+                child: const Row(
+                  children: [
+                    Expanded(flex: 3, child: TableHeaderCell('Nombre')),
+                    Expanded(flex: 3, child: TableHeaderCell('Correo')),
+                    Expanded(flex: 2, child: TableHeaderCell('Teléfono')),
+                    Expanded(flex: 2, child: TableHeaderCell('RFC')),
+                    Expanded(
+                      flex: 2,
+                      child: TableHeaderCell('Fecha de creación'),
                     ),
-                  )
-                : ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, __) =>
-                        const Divider(height: 1, color: Color(0xFFEDE5DC)),
-                    itemBuilder: (context, index) {
-                      final c = filtered[index];
-                      return TableCustomerRow(
-                        customer: c,
-                        onView: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CustomerDetailScreen(customer: c),
+                    SizedBox(width: 100, child: TableHeaderCell('Acciones')),
+                  ],
+                ),
+              ),
+
+              // Table body
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(12),
+                  ),
+                  border: Border.all(color: const Color(0xFFEDE5DC)),
+                ),
+                child: state is CustomersInitial
+                    ? const SizedBox.shrink()
+                    : filtered.isEmpty && state is! CustomersLoading
+                    ? const Padding(
+                        padding: EdgeInsets.all(40),
+                        child: Center(
+                          child: Text(
+                            'No se encontraron clientes',
+                            style: TextStyle(
+                              color: AppColors.warmGray,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
-                        onEdit: () => _openEditDialog(c),
-                        onDelete: () => _confirmDelete(c),
-                      );
-                    },
-                  ),
-          ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: filtered.length,
+                        separatorBuilder: (_, __) =>
+                            const Divider(height: 1, color: Color(0xFFEDE5DC)),
+                        itemBuilder: (context, index) {
+                          final c = filtered[index];
+                          return TableCustomerRow(
+                            customer: c,
+                            onView: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    CustomerDetailScreen(customer: c),
+                              ),
+                            ),
+                            onEdit: () => _openEdit(c),
+                            onDelete: () => _confirmDelete(c),
+                          );
+                        },
+                      ),
+              ),
 
-          const SizedBox(height: 12),
-
-          Text(
-            '${filtered.length} cliente${filtered.length != 1 ? 's' : ''} encontrado${filtered.length != 1 ? 's' : ''}',
-            style: const TextStyle(fontSize: 13, color: AppColors.warmGray),
+              const SizedBox(height: 12),
+              Text(
+                '${filtered.length} cliente${filtered.length != 1 ? 's' : ''}',
+                style: const TextStyle(fontSize: 13, color: AppColors.warmGray),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
