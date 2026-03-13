@@ -29,7 +29,7 @@ class CarCard extends StatelessWidget {
           Row(
             children: [
               StyledIconBox(
-                backgroundColor: AppColors.charcoal.withOpacity(0.06),
+                backgroundColor: AppColors.charcoal.withOpacity(0.15),
                 icon: Icons.directions_car_rounded,
               ),
               const Spacer(),
@@ -78,6 +78,23 @@ class CarCard extends StatelessWidget {
                 ),
                 child: Text(
                   car.licensePlate,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.charcoal,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.charcoal.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  car.vin ?? '',
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,

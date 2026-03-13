@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/car.dart';
 import 'package:sap_automotriz_app/features/shared/widgets/custom_text_form_field.dart';
@@ -20,6 +19,7 @@ class _CarFormDialogState extends State<CarFormDialog> {
   late final TextEditingController _yearController;
   late final TextEditingController _colorController;
   late final TextEditingController _plateController;
+  late final TextEditingController _nivController;
 
   bool get isEditing => widget.car != null;
 
@@ -35,6 +35,7 @@ class _CarFormDialogState extends State<CarFormDialog> {
     _plateController = TextEditingController(
       text: widget.car?.licensePlate ?? '',
     );
+    _nivController = TextEditingController(text: widget.car?.vin ?? '');
   }
 
   @override
@@ -44,6 +45,7 @@ class _CarFormDialogState extends State<CarFormDialog> {
     _yearController.dispose();
     _colorController.dispose();
     _plateController.dispose();
+    _nivController.dispose();
     super.dispose();
   }
 
@@ -57,6 +59,7 @@ class _CarFormDialogState extends State<CarFormDialog> {
       year: int.tryParse(_yearController.text) ?? DateTime.now().year,
       color: _colorController.text.trim(),
       licensePlate: _plateController.text.trim().toUpperCase(),
+      vin: _nivController.text.trim().toUpperCase(),
       createdAt: widget.car?.createdAt ?? DateTime.now(),
     );
     Navigator.pop(context, result);
@@ -178,6 +181,16 @@ class _CarFormDialogState extends State<CarFormDialog> {
                 CustomTextFormField(
                   controller: _plateController,
                   text: 'Placas',
+                  prefixIcon: Icon(Icons.pin_outlined),
+                  validatorFunction: (v) =>
+                      v == null || v.isEmpty ? 'Campo requerido' : null,
+                ),
+
+                const SizedBox(height: 14),
+
+                CustomTextFormField(
+                  controller: _nivController,
+                  text: 'Niv',
                   prefixIcon: Icon(Icons.pin_outlined),
                   validatorFunction: (v) =>
                       v == null || v.isEmpty ? 'Campo requerido' : null,

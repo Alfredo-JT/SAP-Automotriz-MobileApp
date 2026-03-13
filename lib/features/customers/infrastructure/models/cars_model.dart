@@ -9,6 +9,7 @@ class CarModel extends Car {
     required super.year,
     required super.color,
     required super.licensePlate,
+    required super.vin,
     super.createdAt,
   });
 
@@ -21,6 +22,7 @@ class CarModel extends Car {
       year: json['year'] as int,
       color: json['color'] as String,
       licensePlate: json['license_plate'] as String,
+      vin: json['vin'] as String?,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
@@ -36,6 +38,7 @@ class CarModel extends Car {
       'year': year,
       'color': color,
       'license_plate': licensePlate,
+      'vin': vin,
       'created_at': createdAt != null ? createdAt!.toIso8601String() : null,
     };
   }
@@ -49,6 +52,7 @@ class CarModel extends Car {
       year: car.year,
       color: car.color,
       licensePlate: car.licensePlate,
+      vin: car.vin,
       createdAt: car.createdAt,
     );
   }

@@ -6,6 +6,7 @@ class Car {
   final int year;
   final String color;
   final String licensePlate;
+  final String? vin;
   final DateTime? createdAt;
 
   const Car({
@@ -16,6 +17,7 @@ class Car {
     required this.year,
     required this.color,
     required this.licensePlate,
+    this.vin,
     this.createdAt,
   });
 
@@ -27,6 +29,7 @@ class Car {
     int? year,
     String? color,
     String? licensePlate,
+    String? vin,
     DateTime? createdAt,
   }) {
     return Car(
@@ -37,6 +40,7 @@ class Car {
       year: year ?? this.year,
       color: color ?? this.color,
       licensePlate: licensePlate ?? this.licensePlate,
+      vin: vin ?? this.vin,
       createdAt: createdAt ?? this.createdAt,
     );
   }

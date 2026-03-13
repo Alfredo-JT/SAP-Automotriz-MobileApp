@@ -23,26 +23,26 @@ class CarsDatasource {
         .toList();
   }
 
-  Future<Car> createCar(Car customer) async {
+  Future<Car> createCar(Car car) async {
     await Future.delayed(const Duration(milliseconds: 400));
     final newId =
         (_db.map((c) => c['id'] as int).reduce((a, b) => a > b ? a : b)) + 1;
     final now = DateTime.now().toIso8601String();
-    final newJson = CarModel.fromEntity(customer).toJson()
+    final newJson = CarModel.fromEntity(car).toJson()
       ..addAll({'id': newId, 'created_at': now, 'updated_at': now});
     _db.add(newJson);
     return CarModel.fromJson(newJson);
   }
 
-  Future<Car> updateCar(Car customer) async {
+  Future<Car> updateCar(Car car) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    final idx = _db.indexWhere((c) => c['id'] == customer.id);
+    final idx = _db.indexWhere((c) => c['id'] == car.id);
     if (idx == -1) {
-      throw Exception('Carro del cliente con id ${customer.id} no encontrado');
+      throw Exception('Carro del cliente con id ${car.id} no encontrado');
     }
-    final updated = CarModel.fromEntity(customer).toJson()
+    final updated = CarModel.fromEntity(car).toJson()
       ..addAll({
-        'id': customer.id,
+        'id': car.id,
         'created_at': _db[idx]['created_at'],
         'updated_at': DateTime.now().toIso8601String(),
       });
