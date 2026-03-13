@@ -3,26 +3,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
 import 'package:sap_automotriz_app/features/customers/domain/entities/customer.dart';
+import 'package:sap_automotriz_app/features/customers/infrastructure/datasources/cars_datasource.dart';
 import 'package:sap_automotriz_app/features/customers/infrastructure/datasources/customers_datasource.dart';
+import 'package:sap_automotriz_app/features/customers/infrastructure/repositories/cars_repository_impl.dart';
 import 'package:sap_automotriz_app/features/customers/infrastructure/repositories/customers_repository_impl.dart';
-import 'package:sap_automotriz_app/features/customers/presentation/bloc/customers_bloc.dart';
-import 'package:sap_automotriz_app/features/customers/presentation/bloc/customers_event.dart';
-import 'package:sap_automotriz_app/features/customers/presentation/bloc/customers_state.dart';
-import 'package:sap_automotriz_app/features/customers/presentation/widgets/table_customer_row.dart';
+import 'package:sap_automotriz_app/features/customers/presentation/bloc/blocs.dart';
+import 'package:sap_automotriz_app/features/customers/presentation/widgets/widgets.dart';
 import 'package:sap_automotriz_app/features/dashboard/presentation/widgets/admin_layout.dart';
 import 'package:sap_automotriz_app/features/shared/widgets/widgets.dart';
 import 'customer_detail_screen.dart';
-import '../widgets/customer_form_dialog.dart';
 
 class CustomersPage extends StatelessWidget {
   const CustomersPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          CustomersBloc(CustomersRepositoryImpl(CustomersDatasource()))
-            ..add(CustomersLoadRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              CustomersBloc(CustomersRepositoryImpl(CustomersDatasource()))
+                ..add(CustomersLoadRequested()),
+        ),
+        BlocProvider(
+          create: (_) => CarsBloc(CarsRepositoryImpl(CarsDatasource())),
+        ),
+      ],
       child: const CustomersScreen(),
     );
   }
@@ -58,6 +64,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
   void _openCreate() async {
     final result = await showDialog<Customer>(
       context: context,
+
       builder: (_) => const CustomerFormDialog(),
     );
     if (result != null && mounted) {
@@ -240,8 +247,18 @@ class _CustomersScreenState extends State<CustomersScreen> {
                             onView: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    CustomerDetailScreen(customer: c),
+                                builder: (_) => MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider.value(
+                                      value: context.read<CustomersBloc>(),
+                                    ),
+                                    BlocProvider.value(
+                                      value: context.read<CarsBloc>()
+                                        ..add(CarsLoadRequested(c.id!)),
+                                    ),
+                                  ],
+                                  child: CustomerDetailScreen(customer: c),
+                                ),
                               ),
                             ),
                             onEdit: () => _openEdit(c),

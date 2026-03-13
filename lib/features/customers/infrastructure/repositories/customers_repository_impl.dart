@@ -18,17 +18,17 @@ class CustomersRepositoryImpl extends CustomersRepository {
   }
 
   @override
-  Future<void> createCustomer(Customer customer) {
+  Future<Customer> createCustomer(Customer customer) {
     return _datasource.createCustomer(customer);
+  }
+
+  @override
+  Future<Customer> updateCustomer(Customer customer) {
+    return _datasource.updateCustomer(customer);
   }
 
   @override
   Future<void> deleteCustomer(int id) {
     return _datasource.deleteCustomer(id);
-  }
-
-  @override
-  Future<void> updateCustomer(Customer customer) {
-    return _datasource.updateCustomer(customer);
   }
 }
