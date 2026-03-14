@@ -59,6 +59,7 @@ class UserAccount {
   final String phone;
   final String? email;
   final UserRole role;
+  final String? password;
   final double? salary;
   final bool isActive;
   final DateTime? createdAt;
@@ -70,8 +71,9 @@ class UserAccount {
     required this.phone,
     this.email,
     required this.role,
+    this.password,
     this.salary,
-    this.isActive = true,
+    required this.isActive,
     this.createdAt,
     this.updatedAt,
   });
@@ -82,6 +84,7 @@ class UserAccount {
     String? phone,
     String? email,
     UserRole? role,
+    String? password,
     double? salary,
     bool? isActive,
     DateTime? createdAt,
@@ -93,6 +96,7 @@ class UserAccount {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       role: role ?? this.role,
+      password: password ?? this.password,
       salary: salary ?? this.salary,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,

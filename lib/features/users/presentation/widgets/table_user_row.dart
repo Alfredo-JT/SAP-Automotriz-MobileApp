@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
-import 'package:sap_automotriz_app/features/users/domain/user_account.dart';
+import 'package:sap_automotriz_app/features/users/domain/entities/user.dart';
 
 class TableUserRow extends StatelessWidget {
   final UserAccount user;
