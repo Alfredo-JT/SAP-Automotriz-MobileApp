@@ -48,7 +48,10 @@ class _ServicesHubScreenState extends State<ServicesHubScreen>
                 label: 'Servicios Cotizados (Completar y revisar cotizaciones)',
                 icon: Icons.request_quote_outlined,
               ),
-              _TabItem(label: 'Operaciones', icon: Icons.tune_rounded),
+              _TabItem(
+                label: 'Información de Servicios',
+                icon: Icons.tune_rounded,
+              ),
             ],
           ),
           const SizedBox(height: 20),

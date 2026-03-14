@@ -92,6 +92,19 @@ extension ServiceChannelExtension on ServiceChannel {
         return 'WhatsApp';
     }
   }
+
+  static ServiceChannel fromString(String value) {
+    switch (value) {
+      case 'in_person':
+        return ServiceChannel.inPerson;
+      case 'phone_call':
+        return ServiceChannel.phoneCall;
+      case 'whatsapp':
+        return ServiceChannel.whatsapp;
+      default:
+        throw ArgumentError('Unknown service channel: $value');
+    }
+  }
 }
 
 enum ServiceType { general, alignmentBalancing }
@@ -114,6 +127,17 @@ extension ServiceTypeExtension on ServiceType {
         return 'Alineación y Balanceo';
     }
   }
+
+  static ServiceType fromString(String value) {
+    switch (value) {
+      case 'general':
+        return ServiceType.general;
+      case 'alignment_balancing':
+        return ServiceType.alignmentBalancing;
+      default:
+        throw ArgumentError('Unknown service channel: $value');
+    }
+  }
 }
 
 class Service {
@@ -129,6 +153,7 @@ class Service {
   final DateTime intakeDate;
   final DateTime? estimatedDeliveryDate;
   final DateTime? actualDeliveryDate;
+  final String? sharepointFilePath;
   final ServiceType serviceType;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -150,6 +175,7 @@ class Service {
     required this.intakeDate,
     this.estimatedDeliveryDate,
     this.actualDeliveryDate,
+    this.sharepointFilePath,
     required this.serviceType,
     this.createdAt,
     this.updatedAt,
@@ -170,6 +196,7 @@ class Service {
     DateTime? intakeDate,
     DateTime? estimatedDeliveryDate,
     DateTime? actualDeliveryDate,
+    String? sharepointFilePath,
     ServiceType? serviceType,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -190,6 +217,7 @@ class Service {
       estimatedDeliveryDate:
           estimatedDeliveryDate ?? this.estimatedDeliveryDate,
       actualDeliveryDate: actualDeliveryDate ?? this.actualDeliveryDate,
+      sharepointFilePath: sharepointFilePath ?? this.sharepointFilePath,
       serviceType: serviceType ?? this.serviceType,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

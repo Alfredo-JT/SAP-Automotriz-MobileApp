@@ -80,7 +80,7 @@ class _QuoteLineItemFormDialogState extends State<QuoteLineItemFormDialog> {
       text: widget.item?.quantity.toString() ?? '1',
     );
     _unitPriceController = TextEditingController(
-      text: widget.item?.unitPrice.toStringAsFixed(2) ?? '',
+      text: widget.item?.unitPrice!.toStringAsFixed(2) ?? '',
     );
     _unitController = TextEditingController(text: widget.item?.unit ?? '');
     _taxable = widget.item?.taxable ?? false;

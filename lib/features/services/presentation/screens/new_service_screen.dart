@@ -121,14 +121,16 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
       return;
     }
 
-    // In real app, dispatch BLoC event
+    // TODO: In real app, dispatch BLoC event
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Servicio $_previewFolio creado correctamente'),
+        content: Text(
+          'Servicio $_previewFolio creado y enviado al Jefe de taller correctamente',
+        ),
         backgroundColor: const Color(0xFF16A34A),
       ),
     );
-    Navigator.pop(context);
+    // Navigator.pop(context);
   }
 
   @override
@@ -216,13 +218,13 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
                     ),
                     const SizedBox(height: 14),
 
-                    // Descripción detallada
-                    CustomTextFormField(
-                      prefixIcon: Icon(Icons.notes_rounded),
-                      controller: _detailedDescController,
-                      maxLines: 3,
-                      text: 'Descripción detallada *',
-                    ),
+                    // // Descripción detallada
+                    // CustomTextFormField(
+                    //   prefixIcon: Icon(Icons.notes_rounded),
+                    //   controller: _detailedDescController,
+                    //   maxLines: 3,
+                    //   text: 'Descripción detallada *',
+                    // ),
                   ],
                 ),
 

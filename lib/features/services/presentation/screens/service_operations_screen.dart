@@ -336,7 +336,7 @@ class _AdditionalChargesSection extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'x${item.quantity}  \$${item.totalAmount.toStringAsFixed(2)}',
+                        'x${item.quantity}  \$${item.totalAmount!.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.warmGray,

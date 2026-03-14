@@ -130,7 +130,8 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
       _selectedService != null ? _quotes[_selectedService!.id] : null;
 
   double get _subtotal =>
-      _currentQuote?.lineItems.fold(0.0, (sum, i) => sum! + i.totalAmount) ?? 0;
+      _currentQuote?.lineItems.fold(0.0, (sum, i) => sum! + i.totalAmount!) ??
+      0;
 
   double get _taxTotal =>
       _currentQuote?.lineItems
@@ -349,8 +350,6 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                               ),
                               itemBuilder: (_, i) {
                                 final item = _currentQuote!.lineItems[i];
-                                final isAdminItem =
-                                    item.itemType != QuoteItemType.sparePart;
                                 final typeColor = _itemTypeColor(item.itemType);
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -402,7 +401,7 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Text(
-                                          '\$${item.unitPrice.toStringAsFixed(2)}',
+                                          '\$${item.unitPrice!.toStringAsFixed(2)}',
                                           style: const TextStyle(
                                             fontSize: 13,
                                             color: AppColors.charcoal,
@@ -411,7 +410,7 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          '\$${item.totalAmount.toStringAsFixed(2)}',
+                                          '\$${item.totalAmount!.toStringAsFixed(2)}',
                                           style: const TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -423,50 +422,30 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                                         width: 72,
                                         child: Row(
                                           children: [
-                                            if (isAdminItem) ...[
-                                              IconButton(
-                                                onPressed: () =>
-                                                    _editLineItem(item),
-                                                icon: const Icon(
-                                                  Icons.edit_outlined,
-                                                  size: 16,
-                                                  color: AppColors.warmGray,
-                                                ),
-                                                constraints:
-                                                    const BoxConstraints(),
-                                                padding: const EdgeInsets.all(
-                                                  5,
-                                                ),
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _editLineItem(item),
+                                              icon: const Icon(
+                                                Icons.edit_outlined,
+                                                size: 16,
+                                                color: AppColors.warmGray,
                                               ),
-                                              IconButton(
-                                                onPressed: () =>
-                                                    _deleteLineItem(item),
-                                                icon: const Icon(
-                                                  Icons.delete_outline_rounded,
-                                                  size: 16,
-                                                  color: AppColors.crimsonRed,
-                                                ),
-                                                constraints:
-                                                    const BoxConstraints(),
-                                                padding: const EdgeInsets.all(
-                                                  5,
-                                                ),
+                                              constraints:
+                                                  const BoxConstraints(),
+                                              padding: const EdgeInsets.all(5),
+                                            ),
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _deleteLineItem(item),
+                                              icon: const Icon(
+                                                Icons.delete_outline_rounded,
+                                                size: 16,
+                                                color: AppColors.crimsonRed,
                                               ),
-                                            ] else
-                                              const Padding(
-                                                padding: EdgeInsets.only(
-                                                  left: 8,
-                                                ),
-                                                child: Tooltip(
-                                                  message:
-                                                      'Agregado por técnico',
-                                                  child: Icon(
-                                                    Icons.lock_outline_rounded,
-                                                    size: 14,
-                                                    color: AppColors.warmGray,
-                                                  ),
-                                                ),
-                                              ),
+                                              constraints:
+                                                  const BoxConstraints(),
+                                              padding: const EdgeInsets.all(5),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -540,6 +519,26 @@ class _QuoteCompletionScreenState extends State<QuoteCompletionScreen> {
                           icon: const Icon(Icons.save_outlined, size: 18),
                           label: const Text('Guardar cotización'),
                         ),
+                        const SizedBox(width: 10),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            // TODO: implementar generación de PDF versión cliente y versión administrador
+                          },
+                          icon: const Icon(
+                            Icons.picture_as_pdf_outlined,
+                            size: 18,
+                          ),
+                          label: const Text('Generar PDFs'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.charcoal,
+                            side: const BorderSide(color: AppColors.warmGray),
+                          ),
+                        ),
+
+                        // CustomElevatedButton(
+                        //   text: 'Enviar Cotización a Cliente',
+                        //   isLoading: false,
+                        // ),
                       ],
                     ),
                   ],
