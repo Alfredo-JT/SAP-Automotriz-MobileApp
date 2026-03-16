@@ -1,5 +1,5 @@
-import 'package:sap_automotriz_app/features/customers/domain/entities/car.dart';
-import 'package:sap_automotriz_app/features/customers/domain/entities/customer.dart';
+import 'package:sap_automotriz_app/features/admin/customers/domain/entities/car.dart';
+import 'package:sap_automotriz_app/features/admin/customers/domain/entities/customer.dart';
 
 enum ServiceStatus {
   notStarted,
@@ -107,7 +107,12 @@ extension ServiceChannelExtension on ServiceChannel {
   }
 }
 
-enum ServiceType { general, alignmentBalancing }
+enum ServiceType {
+  general,
+  alignmentBalancing,
+  expressBreaks,
+  expressMaintenance,
+}
 
 extension ServiceTypeExtension on ServiceType {
   String get value {
@@ -116,6 +121,10 @@ extension ServiceTypeExtension on ServiceType {
         return 'general';
       case ServiceType.alignmentBalancing:
         return 'alignment_balancing';
+      case ServiceType.expressMaintenance:
+        return 'express_maintenance';
+      case ServiceType.expressBreaks:
+        return 'express_brakes';
     }
   }
 
@@ -125,6 +134,10 @@ extension ServiceTypeExtension on ServiceType {
         return 'General';
       case ServiceType.alignmentBalancing:
         return 'Alineación y Balanceo';
+      case ServiceType.expressMaintenance:
+        return 'Express (Mantenimiento)';
+      case ServiceType.expressBreaks:
+        return 'Express (Frenos)';
     }
   }
 
@@ -134,6 +147,10 @@ extension ServiceTypeExtension on ServiceType {
         return ServiceType.general;
       case 'alignment_balancing':
         return ServiceType.alignmentBalancing;
+      case 'express_maintenance':
+        return ServiceType.expressMaintenance;
+      case 'express_brakes':
+        return ServiceType.expressBreaks;
       default:
         throw ArgumentError('Unknown service channel: $value');
     }

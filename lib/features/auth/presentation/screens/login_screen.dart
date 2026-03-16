@@ -30,7 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
     await Future.delayed(const Duration(milliseconds: 800));
     if (mounted) {
       setState(() => _isLoading = false);
-      Navigator.pushReplacementNamed(context, RouteNames.dashboardAdmin);
+      // TODO: Agregar manejo de roles para redirigir al respectico dashboard
+      // Navigator.pushReplacementNamed(context, RouteNames.dashboardAdmin);
+      Navigator.pushReplacementNamed(context, RouteNames.dashboardWm);
     }
   }
 
