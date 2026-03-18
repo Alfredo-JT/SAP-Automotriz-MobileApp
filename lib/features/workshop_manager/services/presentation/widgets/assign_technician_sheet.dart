@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
+import 'package:sap_automotriz_app/features/services/domain/entities/entities.dart';
 
 class AssignTechnicianSheet extends StatefulWidget {
-  final Map<String, dynamic> service;
+  final Service service;
   final List<Map<String, dynamic>> technicians;
   final void Function(int technicianId, String technicianName) onAssign;
 
@@ -84,7 +85,7 @@ class _AssignTechnicianSheetState extends State<AssignTechnicianSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Asignar técnico',
                             style: TextStyle(
                               fontSize: 16,
@@ -93,7 +94,7 @@ class _AssignTechnicianSheetState extends State<AssignTechnicianSheet> {
                             ),
                           ),
                           Text(
-                            widget.service['folio'] as String,
+                            widget.service.folio,
                             style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.warmGray,

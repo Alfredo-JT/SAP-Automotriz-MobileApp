@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
+import 'package:sap_automotriz_app/features/services/data/services_quoted_mock.dart';
+import 'package:sap_automotriz_app/features/services/domain/entities/entities.dart';
+import 'package:sap_automotriz_app/features/services/infrastructure/models/service_with_quote_model.dart';
 import 'package:sap_automotriz_app/features/workshop_manager/shared/presentation/widgets/workshop_manager_layout.dart';
 import '../widgets/service_card_wm.dart';
+import '../widgets/quote_line_items_preview.dart';
 
 class WmReviewedScreen extends StatefulWidget {
   const WmReviewedScreen({super.key});
@@ -11,44 +15,17 @@ class WmReviewedScreen extends StatefulWidget {
 }
 
 class _WmReviewedScreenState extends State<WmReviewedScreen> {
-  final List<Map<String, dynamic>> _services = [
-    {
-      'id': 4,
-      'folio': '080326-02',
-      'shortDescription': 'Balanceo y alineación + revisión suspensión',
-      'serviceType': 'alignment_balancing',
-      'channel': 'whatsapp',
-      'intakeDate': '08/03/2026',
-      'customerName': 'Laura González',
-      'carLabel': '2018 Chevrolet Aveo — DEF-789',
-      'status': 'quoted',
-      'assignedTechnician': 'Luis Carrillo',
-      'quoteTotal': 1218.00,
-      'lineItemsCount': 3,
-    },
-    {
-      'id': 5,
-      'folio': '070326-01',
-      'shortDescription': 'Cambio de frenos delanteros',
-      'serviceType': 'general',
-      'channel': 'in_person',
-      'intakeDate': '07/03/2026',
-      'customerName': 'Roberto Hernández',
-      'carLabel': '2020 VW Jetta — GHI-321',
-      'status': 'quoted',
-      'assignedTechnician': 'Héctor Vega',
-      'quoteTotal': 2050.00,
-      'lineItemsCount': 4,
-    },
-  ];
+  final List<ServiceWithQuoteModel> _services = quotedServicesMock
+      .map((json) => ServiceWithQuoteModel.fromJson(json))
+      .toList();
 
-  void _approveQuote(Map<String, dynamic> service) {
+  void _approveQuote(Service service) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Aprobar cotización'),
         content: Text(
-          '¿Aprobar la cotización del folio ${service['folio']} para enviarla al administrador?',
+          '¿Aprobar la cotización del folio ${service.folio} para enviarla al administrador?',
         ),
         actions: [
           TextButton(
@@ -57,9 +34,7 @@ class _WmReviewedScreenState extends State<WmReviewedScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(
-                () => _services.removeWhere((s) => s['id'] == service['id']),
-              );
+              // TODO: Actualizar el esta del servicio a "authorized"
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -77,13 +52,13 @@ class _WmReviewedScreenState extends State<WmReviewedScreen> {
     );
   }
 
-  void _returnToUnquoted(Map<String, dynamic> service) {
+  void _returnToUnquoted(Service service) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Devolver a revisión'),
         content: Text(
-          '¿Devolver el folio ${service['folio']} al estado "Sin Cotizar" para que el técnico lo revise de nuevo?',
+          '¿Devolver el folio ${service.folio} al estado "Sin Cotizar" para que el técnico lo revise de nuevo?',
         ),
         actions: [
           TextButton(
@@ -92,9 +67,6 @@ class _WmReviewedScreenState extends State<WmReviewedScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(
-                () => _services.removeWhere((s) => s['id'] == service['id']),
-              );
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -131,38 +103,32 @@ class _WmReviewedScreenState extends State<WmReviewedScreen> {
               itemCount: _services.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, i) {
-                final s = _services[i];
+                final serviceWithQuote = _services[i];
+                final service = serviceWithQuote.service;
+                final car = serviceWithQuote.service.car;
+                final customer = serviceWithQuote.service.customer;
+                final lineItems = serviceWithQuote.quote?.lineItems ?? [];
+                final total = serviceWithQuote.quote?.total ?? 0.0;
+
                 return ServiceCardWm(
-                  service: s,
+                  service: service,
+                  car: car,
+                  customer: customer,
                   primaryActionLabel: 'Aprobar cotización',
                   primaryActionIcon: Icons.check_circle_outline_rounded,
-                  primaryActionColor: const Color(0xFF16A34A),
-                  onPrimaryAction: () => _approveQuote(s),
+                  primaryActionColor: Color(0xFF2563EB),
+                  onPrimaryAction: () => _approveQuote(service),
                   secondaryActions: [
                     SecondaryAction(
-                      label: 'Devolver',
+                      label: 'Devolver a técnico',
                       icon: Icons.undo_rounded,
-                      color: AppColors.golden,
-                      onTap: () => _returnToUnquoted(s),
+                      color: Color(0xFF2563EB),
+                      onTap: () => _returnToUnquoted(service),
                     ),
                   ],
-                  bottomInfo: Row(
-                    children: [
-                      const Icon(
-                        Icons.receipt_outlined,
-                        size: 13,
-                        color: Color(0xFF2563EB),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        '${s['lineItemsCount']} partidas  •  \$${(s['quoteTotal'] as double).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF2563EB),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  bottomInfo: QuoteLineItemsPreview(
+                    lineItems: lineItems,
+                    total: total,
                   ),
                 );
               },
@@ -170,16 +136,3 @@ class _WmReviewedScreenState extends State<WmReviewedScreen> {
     );
   }
 }
-
-// class SecondaryAction {
-//   final String label;
-//   final IconData icon;
-//   final Color color;
-//   final VoidCallback onTap;
-//   const SecondaryAction({
-//     required this.label,
-//     required this.icon,
-//     required this.color,
-//     required this.onTap,
-//   });
-// }

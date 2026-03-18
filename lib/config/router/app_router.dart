@@ -79,14 +79,9 @@ class AppRouter {
           builder: (_) => const WorkshopManagerDashboard(),
           settings: settings,
         );
-      case RouteNames.wmAuthorized:
+      case RouteNames.wmUnquoted:
         return MaterialPageRoute(
-          builder: (_) => const WmAuthorizedScreen(),
-          settings: settings,
-        );
-      case RouteNames.wmCompleted:
-        return MaterialPageRoute(
-          builder: (_) => const WmCompletedScreen(),
+          builder: (_) => const WmUnquotedScreen(),
           settings: settings,
         );
       case RouteNames.wmReviewed:
@@ -94,16 +89,21 @@ class AppRouter {
           builder: (_) => const WmReviewedScreen(),
           settings: settings,
         );
-      case RouteNames.wmUnquoted:
+      case RouteNames.wmAuthorized:
         return MaterialPageRoute(
-          builder: (_) => const WmUnquotedScreen(),
+          builder: (_) => const WmAuthorizedScreen(),
           settings: settings,
         );
-      case RouteNames.wmWorkload:
+      case RouteNames.wmCompleted:
         return MaterialPageRoute(
-          builder: (_) => const WorkloadScreen(),
+          builder: (_) => WmCompletedScreen(),
           settings: settings,
         );
+      // case RouteNames.wmWorkload:
+      //   return MaterialPageRoute(
+      //     builder: (_) => const WorkloadScreen(),
+      //     settings: settings,
+      //   );
 
       default:
         return MaterialPageRoute(

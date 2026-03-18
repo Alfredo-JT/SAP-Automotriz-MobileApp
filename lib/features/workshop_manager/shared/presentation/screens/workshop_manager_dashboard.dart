@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/router/app_router.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
+import 'package:sap_automotriz_app/features/workshop_manager/services/presentation/widgets/section_card_wm.dart';
 import 'package:sap_automotriz_app/features/workshop_manager/shared/presentation/widgets/workshop_manager_layout.dart';
 
 class WorkshopManagerDashboard extends StatelessWidget {
@@ -18,83 +19,52 @@ class WorkshopManagerDashboard extends StatelessWidget {
             // Greeting
             const SizedBox(height: 4),
             const Text(
-              'Resumen del día',
+              'Servicios clasificados por estado',
               style: TextStyle(
-                fontSize: 13,
-                color: AppColors.warmGray,
+                fontSize: 20,
+                color: AppColors.black,
                 letterSpacing: 0.5,
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Summary chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _SummaryChip(
-                    label: 'Sin cotizar',
-                    value: '3',
-                    color: const Color(0xFF7C3AED),
-                  ),
-                  const SizedBox(width: 10),
-                  _SummaryChip(
-                    label: 'Por revisar',
-                    value: '2',
-                    color: const Color(0xFF2563EB),
-                  ),
-                  const SizedBox(width: 10),
-                  _SummaryChip(
-                    label: 'Por asignar',
-                    value: '1',
-                    color: AppColors.golden,
-                  ),
-                  const SizedBox(width: 10),
-                  _SummaryChip(
-                    label: 'Finalizados',
-                    value: '4',
-                    color: const Color(0xFF16A34A),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
             // Section cards
-            _SectionCard(
+            SectionCard(
               icon: Icons.assignment_outlined,
               title: 'Sin Cotizar / Recotización',
               description:
-                  'Asigna técnicos para revisión según carga de trabajo',
+                  'Asigne un servicio a un técnico para que realice la cotización inicial.',
               color: const Color(0xFF7C3AED),
               badge: '3',
               onTap: () => Navigator.pushNamed(context, RouteNames.wmUnquoted),
             ),
             const SizedBox(height: 12),
-            _SectionCard(
+            SectionCard(
               icon: Icons.rate_review_outlined,
               title: 'Revisados / Cotizados por técnicos',
-              description: 'Aprueba o devuelve cotizaciones al administrador',
+              description:
+                  'Apruebe las cotizaciones o devuelvalas para revisión.',
               color: const Color(0xFF2563EB),
               badge: '2',
               onTap: () => Navigator.pushNamed(context, RouteNames.wmReviewed),
             ),
             const SizedBox(height: 12),
-            _SectionCard(
+            SectionCard(
               icon: Icons.engineering_rounded,
               title: 'Cotizaciones aprobadas por cliente',
-              description: 'Asigna técnico(s) para iniciar el servicio',
+              description:
+                  'Asigne técnico(s) para iniciar el trabajo de un servicio.',
               color: AppColors.golden,
               badge: '1',
               onTap: () =>
                   Navigator.pushNamed(context, RouteNames.wmAuthorized),
             ),
             const SizedBox(height: 12),
-            _SectionCard(
+            SectionCard(
               icon: Icons.task_alt_rounded,
               title: 'Finalizados por técnicos',
-              description: 'Servicios completados pendientes de entrega',
+              description:
+                  'Servicios marcados como completados por los técnicos.',
               color: const Color(0xFF16A34A),
               badge: '4',
               onTap: () => Navigator.pushNamed(context, RouteNames.wmCompleted),
@@ -111,158 +81,8 @@ class WorkshopManagerDashboard extends StatelessWidget {
   }
 }
 
-class _SummaryChip extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-
-  const _SummaryChip({
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEDE5DC)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                ),
-              ),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 10, color: AppColors.warmGray),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String description;
-  final Color color;
-  final String badge;
-  final VoidCallback onTap;
-
-  const _SectionCard({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.color,
-    required this.badge,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFEDE5DC)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.charcoal,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      description,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.warmGray,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        badge,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Icon(Icons.chevron_right_rounded, color: color, size: 18),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
+// TODO: Implementar un Widget de Calendar
 // ── Workload preview widget ────────────────────────────────────────────────
-
 class _WorkloadPreview extends StatelessWidget {
   // Mock technicians — replace with BLoC
   final List<Map<String, dynamic>> _technicians = const [

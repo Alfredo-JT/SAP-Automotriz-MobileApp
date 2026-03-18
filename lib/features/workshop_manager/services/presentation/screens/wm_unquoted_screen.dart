@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sap_automotriz_app/config/theme/app_theme.dart';
+import 'package:sap_automotriz_app/features/admin/customers/domain/entities/car.dart';
+import 'package:sap_automotriz_app/features/admin/customers/domain/entities/customer.dart';
+import 'package:sap_automotriz_app/features/services/domain/entities/entities.dart';
 import 'package:sap_automotriz_app/features/workshop_manager/shared/presentation/widgets/workshop_manager_layout.dart';
 import '../widgets/service_card_wm.dart';
 import '../widgets/assign_technician_sheet.dart';
@@ -14,43 +17,60 @@ class WmUnquotedScreen extends StatefulWidget {
 
 class _WmUnquotedScreenState extends State<WmUnquotedScreen> {
   // Mock services — replace with BLoC
-  final List<Map<String, dynamic>> _services = [
-    {
-      'id': 1,
-      'folio': '100326-01',
-      'shortDescription': 'Cambio de aceite y revisión general',
-      'serviceType': 'general',
-      'channel': 'in_person',
-      'intakeDate': '10/03/2026',
-      'customerName': 'Carlos Ramírez',
-      'carLabel': '2019 Nissan Versa — ABC-123',
-      'status': 'under_review',
-      'assignedTechnician': null,
-    },
-    {
-      'id': 2,
-      'folio': '100326-02',
-      'shortDescription': 'Diagnóstico eléctrico — falla de arranque',
-      'serviceType': 'general',
-      'channel': 'whatsapp',
-      'intakeDate': '10/03/2026',
-      'customerName': 'Laura González',
-      'carLabel': '2018 Chevrolet Aveo — DEF-789',
-      'status': 'not_started',
-      'assignedTechnician': null,
-    },
-    {
-      'id': 3,
-      'folio': '090326-03',
-      'shortDescription': 'Revisión de suspensión trasera',
-      'serviceType': 'general',
-      'channel': 'phone_call',
-      'intakeDate': '09/03/2026',
-      'customerName': 'Roberto Hernández',
-      'carLabel': '2020 Volkswagen Jetta — GHI-321',
-      'status': 'under_review',
-      'assignedTechnician': 'Luis Carrillo',
-    },
+
+  final List<Service> _services = [
+    Service(
+      id: 1,
+      customerId: 1,
+      carId: 1,
+      createdByUserId: 1,
+      folio: '100326-01',
+      channel: ServiceChannel.inPerson,
+      shortDescription: 'Cambio de aceite y revisión general',
+      status: ServiceStatus.quoted,
+      intakeDate: DateTime(2026, 3, 10),
+      serviceType: ServiceType.general,
+      customer: Customer(
+        id: 1,
+        fullName: 'Carlos Ramírez',
+        phone: '461-123-4567',
+      ),
+      car: Car(
+        id: 1,
+        customerId: 1,
+        make: 'Nissan',
+        model: 'Versa',
+        year: 2019,
+        color: 'Blanco',
+        licensePlate: 'ABC-123',
+      ),
+    ),
+    Service(
+      id: 2,
+      customerId: 2,
+      carId: 3,
+      createdByUserId: 1,
+      folio: '080326-02',
+      channel: ServiceChannel.whatsapp,
+      shortDescription: 'Balanceo y alineación + revisión suspensión',
+      status: ServiceStatus.quoted,
+      intakeDate: DateTime(2026, 3, 8),
+      serviceType: ServiceType.alignmentBalancing,
+      customer: Customer(
+        id: 2,
+        fullName: 'Laura González',
+        phone: '461-987-6543',
+      ),
+      car: Car(
+        id: 3,
+        customerId: 2,
+        make: 'Chevrolet',
+        model: 'Aveo',
+        year: 2018,
+        color: 'Rojo',
+        licensePlate: 'DEF-789',
+      ),
+    ),
   ];
 
   // Mock technicians
@@ -75,7 +95,7 @@ class _WmUnquotedScreenState extends State<WmUnquotedScreen> {
     },
   ];
 
-  void _openAssignSheet(Map<String, dynamic> service) {
+  void _openAssignSheet(Service service) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -85,10 +105,7 @@ class _WmUnquotedScreenState extends State<WmUnquotedScreen> {
         technicians: _technicians,
         onAssign: (technicianId, technicianName) {
           setState(() {
-            final idx = _services.indexWhere((s) => s['id'] == service['id']);
-            if (idx != -1) {
-              _services[idx]['assignedTechnician'] = technicianName;
-            }
+            // TODO: Creación de un service_technician para asignar un Servicio a Técnico
           });
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -133,35 +150,18 @@ class _WmUnquotedScreenState extends State<WmUnquotedScreen> {
               itemCount: _services.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, i) {
-                final s = _services[i];
+                final service = _services[i];
+                final car = service.car;
+                final customer = service.customer;
+
                 return ServiceCardWm(
-                  service: s,
-                  primaryActionLabel: s['assignedTechnician'] == null
-                      ? 'Asignar técnico'
-                      : 'Reasignar técnico',
+                  service: service,
+                  car: car,
+                  customer: customer,
+                  primaryActionLabel: 'Asignar técnico',
                   primaryActionIcon: Icons.person_add_rounded,
                   primaryActionColor: const Color(0xFF7C3AED),
-                  onPrimaryAction: () => _openAssignSheet(s),
-                  bottomInfo: s['assignedTechnician'] != null
-                      ? Row(
-                          children: [
-                            const Icon(
-                              Icons.engineering_rounded,
-                              size: 13,
-                              color: Color(0xFF7C3AED),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              'Asignado: ${s['assignedTechnician']}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF7C3AED),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        )
-                      : null,
+                  onPrimaryAction: () => _openAssignSheet(service),
                 );
               },
             ),

@@ -3,7 +3,7 @@ import 'package:sap_automotriz_app/features/admin/customers/domain/entities/car.
 class CarModel extends Car {
   const CarModel({
     super.id,
-    required super.customerId,
+    super.customerId,
     required super.make,
     required super.model,
     required super.year,
@@ -16,7 +16,7 @@ class CarModel extends Car {
   factory CarModel.fromJson(Map<String, dynamic> json) {
     return CarModel(
       id: json['id'] as int?,
-      customerId: json['customer_id'] as int,
+      customerId: json['customer_id'] as int?,
       make: json['make'] as String,
       model: json['model'] as String,
       year: json['year'] as int,
@@ -32,7 +32,7 @@ class CarModel extends Car {
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'customer_id': customerId,
+      if (customerId != null) 'customer_id': customerId,
       'make': make,
       'model': model,
       'year': year,

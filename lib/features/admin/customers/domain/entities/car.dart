@@ -1,6 +1,6 @@
 class Car {
   final int? id;
-  final int customerId;
+  final int? customerId;
   final String make;
   final String model;
   final int year;
@@ -11,7 +11,7 @@ class Car {
 
   const Car({
     this.id,
-    required this.customerId,
+    this.customerId,
     required this.make,
     required this.model,
     required this.year,

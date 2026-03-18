@@ -25,7 +25,7 @@ class WorkshopManagerLayout extends StatelessWidget {
         elevation: 0,
         leading: showBackButton
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                 onPressed: () => Navigator.pop(context),
               )
             : Padding(

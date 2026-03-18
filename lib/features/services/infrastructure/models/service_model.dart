@@ -1,3 +1,5 @@
+import 'package:sap_automotriz_app/features/admin/customers/infrastructure/models/cars_model.dart';
+import 'package:sap_automotriz_app/features/admin/customers/infrastructure/models/customer_model.dart';
 import 'package:sap_automotriz_app/features/services/domain/entities/service.dart';
 
 class ServiceModel extends Service {
@@ -18,6 +20,8 @@ class ServiceModel extends Service {
     required super.serviceType,
     super.createdAt,
     super.updatedAt,
+    super.customer,
+    super.car,
   });
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +51,12 @@ class ServiceModel extends Service {
           : null,
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
+          : null,
+      customer: json['customer'] != null
+          ? CustomerModel.fromJson(json['customer'] as Map<String, dynamic>)
+          : null,
+      car: json['car'] != null
+          ? CarModel.fromJson(json['car'] as Map<String, dynamic>)
           : null,
     );
   }
@@ -92,6 +102,8 @@ class ServiceModel extends Service {
       serviceType: service.serviceType,
       createdAt: service.createdAt,
       updatedAt: service.updatedAt,
+      customer: service.customer,
+      car: service.car,
     );
   }
 }

@@ -30,7 +30,7 @@ class CarsBloc extends Bloc<CarsEvent, CarsState> {
     emit(CarsLoading());
     try {
       await _repository.createCar(event.car);
-      final cars = await _repository.getCarsByCustomerId(event.car.customerId);
+      final cars = await _repository.getCarsByCustomerId(event.car.customerId!);
       emit(
         CarsOperationSuccess(
           cars: cars,
@@ -49,7 +49,7 @@ class CarsBloc extends Bloc<CarsEvent, CarsState> {
     emit(CarsLoading());
     try {
       await _repository.updateCar(event.car);
-      final cars = await _repository.getCarsByCustomerId(event.car.customerId);
+      final cars = await _repository.getCarsByCustomerId(event.car.customerId!);
       emit(
         CarsOperationSuccess(
           cars: cars,
@@ -68,7 +68,7 @@ class CarsBloc extends Bloc<CarsEvent, CarsState> {
     emit(CarsLoading());
     try {
       await _repository.deleteCar(event.car.id!);
-      final cars = await _repository.getCarsByCustomerId(event.car.customerId);
+      final cars = await _repository.getCarsByCustomerId(event.car.customerId!);
       emit(
         CarsOperationSuccess(
           cars: cars,

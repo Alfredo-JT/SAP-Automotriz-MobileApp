@@ -77,7 +77,7 @@ class _NewServiceScreenState extends State<NewServiceScreen> {
       folio: _previewFolio,
       channel: _channel,
       shortDescription: _shortDescController.text.trim(),
-      status: ServiceStatus.notAuthorized,
+      status: ServiceStatus.notStarted,
       intakeDate: _intakeDate,
       serviceType: _serviceType,
     );
